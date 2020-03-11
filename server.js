@@ -1,5 +1,31 @@
 const inquirer = require("inquirer");
-const mysql = require("sql");
+const mysql = require("mysql");
+
+
+
+function appMenu () {
+    inquirer.prompt([
+        {
+            type: "list",
+            name: "menu",
+            message: "What would you like to do?",
+            choices: ["Add Employee", "Add Role", "Add Department", "View Employees", "View Roles", "View Departments"],
+        }
+    ]).then(response => {
+        switch(response.menu) {
+        case "Add Employee":
+            addEmployee();
+            break;
+        case "Add Role":
+            addRole();
+            break;
+        case "Add Department":
+            addDeparment();
+            break;
+        }
+
+    });
+}
 
 function addEmployee(){
     inquirer.prompt([
@@ -50,3 +76,5 @@ function addRole(){
         },
     ])
 }
+
+appMenu();
