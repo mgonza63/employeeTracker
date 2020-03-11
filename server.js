@@ -1,6 +1,20 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 
+var connection = mysql.createConnection({
+    host: "localhost",
+  
+    // Your port; if not 3306
+    port: 3306,
+  
+    // Your username
+    user: "root",
+  
+    // Your password
+    password: "glezguerrero",
+    database: "companyDB"
+  });
+
 
 
 function appMenu () {
@@ -22,7 +36,17 @@ function appMenu () {
         case "Add Department":
             addDeparment();
             break;
+        case "View Employees":
+            viewEmployees();
+            break;
+        case "View Roles":
+            viewRoles();
+            break;
+        case "View Departments":
+            viewDepartments();
+            break;
         }
+        
 
     });
 }
@@ -75,6 +99,27 @@ function addRole(){
             message: "How much is the salary for this role?",
         },
     ])
+}
+function viewEmployees() {
+    connection.query("SELECT title, last_name FROM employee", function(err, res) {
+        if (err) throw err;
+        console.log(res);
+        connection.end();
+    })
+}
+function viewRoles() {
+    connection.query("SELECT title FROM role", function(err, res) {
+        if (err) throw err;
+        console.log(res);
+        connection.end();
+    })
+}
+function viewDepartments()  {
+    connection.query("SELECT name FROM department", function(err, res) {
+        if (err) throw err;
+        console.log(res);
+        connection.end();
+    })
 }
 
 appMenu();
