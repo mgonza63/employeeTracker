@@ -73,7 +73,26 @@ function addEmployee(){
             name: "manager_id",
             message: "Who is your employee's manager?",
         },
-    ])
+    ]).then(res => {
+    //     let insertEmployee = `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
+    //     SET ?`
+      
+    //   connection.query(insertEmployee,
+    //     {
+    //       first_name: res.first_name,
+    //       last_name: res.last_name,
+    //       role_id: res.role_id,
+    //       manager_id: res.manager_id,
+    //     },
+        connection.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [res.first_name, res.last_name, res.role_id, res.manager_id], function(err, data) {
+            if (err) throw err;
+            console.table(res);
+
+            appMenu();
+  
+            
+          });
+    })
 }
 
 function addDeparment(){
@@ -101,7 +120,7 @@ function addRole(){
     ])
 }
 function viewEmployees() {
-    connection.query("SELECT title, last_name FROM employee", function(err, res) {
+    connection.query("SELECT first_name, last_name FROM employee", function(err, res) {
         if (err) throw err;
         console.log(res);
         connection.end();
