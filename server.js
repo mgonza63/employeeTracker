@@ -23,7 +23,7 @@ function appMenu () {
             type: "list",
             name: "menu",
             message: "What would you like to do?",
-            choices: ["Add Employee", "Add Role", "Add Department", "View Employees", "View Roles", "View Departments", "Exit?"],
+            choices: ["Add Employee", "Add Role", "Add Department", "View Employees", "View Roles", "View Departments", "Update Employee Role", "Exit?"],
         }
     ]).then(response => {
         switch(response.menu) {
@@ -45,15 +45,19 @@ function appMenu () {
         case "View Departments":
             viewDepartments();
             break;
+        case "Update Employee Role":
+            updateRole();
+            break;
         case "Exit?":
             connection.end();
             break;
-        
+
         }
     });
 }
 
 function addEmployee(){
+    // let employees = connection.query("SELECT first_name, last_name FROM employee")
     inquirer.prompt([
         {
             type: "input",
@@ -123,7 +127,7 @@ function addRole(){
             message: "What is the department ID?",
         }
     ]).then(res => {
-        connection.query("INSERT INTO role (title, salary, department_id) VALUEs (?,?,?)", [res.title, res.salary, res.department_id], function(err, res) {
+        connection.query("INSERT INTO role (title, salary, department_id) VALUES (?,?,?)", [res.title, res.salary, res.department_id], function(err, res) {
             if (err) throw err;
             console.table(res);
             appMenu();
@@ -131,7 +135,7 @@ function addRole(){
     })
 }
 function viewEmployees() {
-    connection.query("SELECT first_name, last_name FROM role", function(err, res) {
+    connection.query("SELECT first_name, last_name FROM employee", function(err, res) {
         if (err) throw err;
         console.table(res);
         appMenu();
@@ -151,5 +155,26 @@ function viewDepartments()  {
         appMenu();
     })
 }
+
+function updateRole() {
+    inquirer.prompt([
+        {
+            type: "input", // make into a list
+            name:"first_name",
+            message: "Which employee would you like to update?"
+
+        },
+        {
+            type: "input",
+            name: "role_id",
+            message: "What is the new role ID?"
+        }
+        ]).then(res => {
+            connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?", [res.role_id, res.first_name], function(err, res) {
+                if (err) throw err;
+                console.table(res);
+            })
+        })
+    }
 
 appMenu();
