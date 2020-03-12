@@ -135,7 +135,8 @@ function addRole(){
     })
 }
 function viewEmployees() {
-    connection.query("SELECT first_name, last_name FROM employee", function(err, res) {
+    // connection.query("SELECT first_name, last_name FROM employee", function(err, res) {
+        connection.query("SELECT first_name, last_name, name, salary FROM employee LEFT JOIN role ON employee.id = role.id LEFT JOIN department on employee.id = department.id", function(err, res) {
         if (err) throw err;
         console.table(res);
         appMenu();
