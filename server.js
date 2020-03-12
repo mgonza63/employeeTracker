@@ -76,16 +76,6 @@ function addEmployee(){
             message: "Who is your employee's manager?",
         }
     ]).then(res => {
-    //     let insertEmployee = `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
-    //     SET ?`
-      
-    //   connection.query(insertEmployee,
-    //     {
-    //       first_name: res.first_name,
-    //       last_name: res.last_name,
-    //       role_id: res.role_id,
-    //       manager_id: res.manager_id,
-    //     },
         connection.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [res.first_name, res.last_name, res.role_id, res.manager_id], function(err, data) {
             if (err) throw err;
             console.table(res);
@@ -127,19 +117,30 @@ function addRole(){
             name: "salary",
             message: "How much is the salary for this role?",
         },
-    ])
+        {
+            type: "input",
+            name: "department_id",
+            message: "What is the department ID?",
+        }
+    ]).then(res => {
+        connection.query("INSERT INTO role (title, salary, department_id) VALUEs (?,?,?)", [res.title, res.salary, res.department_id], function(err, res) {
+            if (err) throw err;
+            console.table(res);
+            appMenu();
+        })
+    })
 }
 function viewEmployees() {
-    connection.query("SELECT first_name, last_name FROM employee", function(err, res) {
+    connection.query("SELECT first_name, last_name FROM role", function(err, res) {
         if (err) throw err;
-        console.log(res);
+        console.table(res);
         appMenu();
     })
 }
 function viewRoles() {
-    connection.query("SELECT title FROM role", function(err, res) {
+    connection.query("SELECT * FROM role", function(err, res) {
         if (err) throw err;
-        console.log(res);
+        console.table(res);
         appMenu();
     })
 }
