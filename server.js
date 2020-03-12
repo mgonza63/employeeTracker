@@ -23,7 +23,7 @@ function appMenu () {
             type: "list",
             name: "menu",
             message: "What would you like to do?",
-            choices: ["Add Employee", "Add Role", "Add Department", "View Employees", "View Roles", "View Departments"],
+            choices: ["Add Employee", "Add Role", "Add Department", "View Employees", "View Roles", "View Departments", "Exit?"],
         }
     ]).then(response => {
         switch(response.menu) {
@@ -45,9 +45,11 @@ function appMenu () {
         case "View Departments":
             viewDepartments();
             break;
-        }
+        case "Exit?":
+            connection.end();
+            break;
         
-
+        }
     });
 }
 
@@ -72,7 +74,7 @@ function addEmployee(){
             type: "input",
             name: "manager_id",
             message: "Who is your employee's manager?",
-        },
+        }
     ]).then(res => {
     //     let insertEmployee = `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
     //     SET ?`
@@ -102,9 +104,17 @@ function addDeparment(){
             name: "department_name",
             message: "What is the department's name?",
         },
-    ])
-}
+    ]).then(res => {
+        connection.query('INSERT INTO department (name) VALUES (?)', [res.department_name], function(err, data) {
+            if (err) throw err;
+            console.table(res);
 
+            appMenu();
+  
+            
+          });
+    })
+}
 function addRole(){
     inquirer.prompt([
         {
@@ -123,21 +133,21 @@ function viewEmployees() {
     connection.query("SELECT first_name, last_name FROM employee", function(err, res) {
         if (err) throw err;
         console.log(res);
-        connection.end();
+        appMenu();
     })
 }
 function viewRoles() {
     connection.query("SELECT title FROM role", function(err, res) {
         if (err) throw err;
         console.log(res);
-        connection.end();
+        appMenu();
     })
 }
 function viewDepartments()  {
     connection.query("SELECT name FROM department", function(err, res) {
         if (err) throw err;
-        console.log(res);
-        connection.end();
+        console.table(res);
+        appMenu();
     })
 }
 
