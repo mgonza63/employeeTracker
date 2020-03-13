@@ -48,6 +48,7 @@ function appMenu () {
             break;
         case "Update Employee Role":
             updateRole();
+            console.log('\n');
             break;
         case "Exit?":
             connection.end();
@@ -73,7 +74,7 @@ function addEmployee(){
         {
             type: "input", //  turn it into a list
             name: "role_id",
-            message: "What is your employee's role?",
+            message: "What is your employee's role ID?",
         },
         {
             type: "input",
@@ -99,8 +100,13 @@ function addDeparment(){
             name: "department_name",
             message: "What is the department's name?",
         },
+        {
+            type: "input",
+            name: "department_id",
+            message: "What is the department's ID?",
+        }
     ]).then(res => {
-        connection.query('INSERT INTO department (name) VALUES (?)', [res.department_name], function(err, data) {
+        connection.query('INSERT INTO department (name, department_id) VALUES (?, ?)', [res.department_name, res.department_id], function(err, data) {
             if (err) throw err;
             console.table(res);
 
@@ -159,11 +165,15 @@ function viewDepartments()  {
 }
 
 function updateRole() {
+    
     connection.query("SELECT employee.id, first_name, last_name, title FROM employee LEFT JOIN role ON employee.id = role.id", function(err, res) {
         if (err) throw err;
+        
+        
         console.table(res);
+        
     })
-
+    
     inquirer.prompt([
         {
             type: "input", // make into a list
@@ -174,7 +184,7 @@ function updateRole() {
         {
             type: "input",
             name: "title",
-            message: "What is the new role ID?"
+            message: "What is the employee's new role?"
         }
         ]).then(res => {
             connection.query("UPDATE role SET title = ? WHERE id = ?", [res.title, res.employee_id], function(err, res) {
