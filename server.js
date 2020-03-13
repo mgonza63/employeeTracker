@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
+require("dotenv").config();
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -11,7 +12,7 @@ var connection = mysql.createConnection({
     user: "root",
   
     // Your password
-    password: "glezguerrero",
+    password: process.env.DB_PASS,
     database: "companyDB"
   });
 
@@ -23,7 +24,7 @@ function appMenu () {
             type: "list",
             name: "menu",
             message: "What would you like to do?",
-            choices: ["Add Employee", "Add Role", "Add Department", "View Employees", "View Roles", "View Departments", "Update Employee Role", "Exit?"],
+            choices: ["Add Employee", "Add Role", "Add Department", "View Employees", "View Roles", "View By Departments", "Update Employee Role", "Exit?"],
         }
     ]).then(response => {
         switch(response.menu) {
@@ -42,7 +43,7 @@ function appMenu () {
         case "View Roles":
             viewRoles();
             break;
-        case "View Departments":
+        case "View By Departments":
             viewDepartments();
             break;
         case "Update Employee Role":
@@ -80,7 +81,7 @@ function addEmployee(){
             message: "Who is your employee's manager?",
         }
     ]).then(res => {
-        connection.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [res.first_name, res.last_name, res.role_id, res.manager_id], function(err, data) {
+        connection.query('INSERT INTO employee (first_name, last_name, role_id, manager) VALUES (?, ?, ?, ?)', [res.first_name, res.last_name, res.role_id, res.manager_id], function(err, data) {
             if (err) throw err;
             console.table(res);
 
@@ -136,7 +137,7 @@ function addRole(){
 }
 function viewEmployees() {
     // connection.query("SELECT first_name, last_name FROM employee", function(err, res) {
-        connection.query("SELECT first_name, last_name, name, salary FROM employee LEFT JOIN role ON employee.id = role.id LEFT JOIN department on employee.id = department.id", function(err, res) {
+        connection.query("SELECT first_name, last_name, title, name, salary FROM employee LEFT JOIN role ON employee.id = role.id LEFT JOIN department on employee.id = department.id", function(err, res) {
         if (err) throw err;
         console.table(res);
         appMenu();
@@ -150,7 +151,7 @@ function viewRoles() {
     })
 }
 function viewDepartments()  {
-    connection.query("SELECT name FROM department", function(err, res) {
+    connection.query("SELECT first_name, last_name, department_id, name FROM employee LEFT JOIN department ON employee.id = department.id ORDER BY department.department_id", function(err, res) {
         if (err) throw err;
         console.table(res);
         appMenu();
@@ -158,22 +159,27 @@ function viewDepartments()  {
 }
 
 function updateRole() {
+    connection.query("SELECT employee.id, first_name, last_name, title FROM employee LEFT JOIN role ON employee.id = role.id", function(err, res) {
+        if (err) throw err;
+        console.table(res);
+    })
+
     inquirer.prompt([
         {
             type: "input", // make into a list
-            name:"first_name",
-            message: "Which employee would you like to update?"
+            name:"employee_id",
+            message: "Enter the employee's ID that you would like to update:"
 
         },
         {
             type: "input",
-            name: "role_id",
+            name: "title",
             message: "What is the new role ID?"
         }
         ]).then(res => {
-            connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?", [res.role_id, res.first_name], function(err, res) {
+            connection.query("UPDATE role SET title = ? WHERE id = ?", [res.title, res.employee_id], function(err, res) {
                 if (err) throw err;
-                console.table(res);
+                appMenu();
             })
         })
     }

@@ -9,7 +9,7 @@ create table employee (
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(30) NOT NULL,
   role_id INT(6) NOT NULL,
-  manager_id INT(6),
+  manager INT(6),
 
   primary key(id)
 );
