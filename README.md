@@ -6,6 +6,8 @@
 ## Description 
     
 Developers are often tasked with creating interfaces that make it easy for non-developers to view and interact with information stored in databases. Often these interfaces are known as Content Management Systems. This project allows you to add employees, departments, and roles to your company's database using MySQL. This way visualizing the data from your employees could not be easier. 
+
+![Demo](./assets/demo1.gif)
     
 ## Table of Contents
     
@@ -35,6 +37,10 @@ MIT
 ## Tests
 
 npm test
+
+## Update The Database
+
+![Demo](./assets/demo2.gif)
 
 ## Contributing
 
